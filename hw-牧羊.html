@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <style>
+                * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Luckiest Guy',微軟正黑體, cursive; 
+            font-size: 1.5rem;
+            overflow: hidden;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        #start{
+            width: 200px;
+            height: 80px;
+            margin: 30px;
+            font-family: 'Luckiest Guy',微軟正黑體, cursive;
+            font-size: 1.5rem; 
+            background-color: white;
+            border-radius:80px;
+            border: 7px solid gold;
+            box-shadow:   5px 5px 5px 3px rgba(0, 0, 0,0.2);
+            
+        }
+        #start:active{
+            width: 198px;
+            height: 78px;
+            box-shadow:   5px 5px 2px 2px rgba(0, 0, 0,0.5);
+        }
+        #bg{
+            position: absolute;
+            float: left;
+            width: 1600px;
+            height: 859px;
+        }
+        #bg p{
+            margin: 30px;
+            right:0;
+            top: 0;
+            float: right;
+            background-color: white;
+            border-radius:30px;
+            border: 7px solid gold;
+        }
+        #game{
+    width: 1600px;
+    height: 600px;
+    /* background: rgba(0, 0, 0,0.3); */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+#hand{
+    background: url(./Grab.gif) no-repeat;
+    width: 100px;
+    height: 100px;
+    z-index: 999;
+    position: absolute;
+    pointer-events: none;
+
+}
+#game img {
+    height: 120px;
+    position: absolute;
+    }
+    
+    </style>
+</head>
+<body>
+    <img id="a" src="./gb.jpg" alt="">
+    <div id="bg"> 
+        <input type="button"value="start !" id="start">
+        <p>&ensp;Score: <span id="score">0</span>分&ensp;</p>
+        <p>&ensp;Time: <span id="time">0</span>秒&ensp;</p>
+        <div id="hand"></div>
+        <div id="game"></div>
+    </div>
+    <script src="./jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // 手的鼠標
+        const hand = document.getElementById('hand');
+        document.onmousemove = (e) => {
+            let x1 = e.clientX;
+            let y1 = e.clientY;
+            hand.style.marginLeft = (x1 - 200) + 'px';
+            hand.style.marginTop = (y1 - 200) + 'px';
+        }
+
+        Swal.fire({
+    title: '趕林羊',
+    text: '太陽下山了!!!!牧羊人要把牛羊趕回去,小心不要抓到狼喔!請抓取牛與羊，不要抓狼',
+    imageUrl: './SHEEP.gif',
+    imageWidth: 300,
+    imageHeight: 300,
+    imageAlt: 'Custom image',
+})
+let score = 0
+let countdown = 30
+let timer = 0
+
+const move =(cow)=>{
+    const top =`${Math.round(Math.random()*90)}%`
+    const left =`${Math.round(Math.random()*90)}%`
+    cow.stop().animate({
+        top:top,
+        left
+    },3000,function(){
+        move(cow)
+    })
+}
+const move1 =(wolf)=>{
+    const top =`${Math.round(Math.random()*90)}%`
+    const left =`${Math.round(Math.random()*90)}%`
+    wolf.stop().animate({
+        top:top,
+        left
+    },3000,function(){
+        move(wolf)
+    })
+}
+const move2 =(sheep)=>{
+    const top =`${Math.round(Math.random()*90)}%`
+    const left =`${Math.round(Math.random()*90)}%`
+    sheep.stop().animate({
+        top:top,
+        left
+    },3000,function(){
+        move(sheep)
+    })
+}
+
+$('#start').click(function(){
+    $(this).attr('disabled',time)
+    score=0
+    $('#score').text(score)
+    countdown =30
+    $('time').text(countdown)
+    $('#a').attr('src','./gb.gif')
+    timer = setInterval(function() {
+        countdown--
+        $('time').text(countdown)
+
+        let random=Math.round(Math.random()*15)
+        if(random>5 && $('#game .cow').length<15){
+            const top =`${Math.round(Math.random()*90)}%`
+            const left =`${Math.round(Math.random()*90)}%`
+            const cow=$(`<img class="cow" src="./COW.gif" style="top:${top};left:${left}">`)
+            const top1 =`${Math.round(Math.random()*90)}%`
+            const left1 =`${Math.round(Math.random()*90)}%`
+            const wolf=$(`<img class="wolf" src="./wolf.gif" style="top:${top1};left:${left1}">`)
+
+            const top2 =`${Math.round(Math.random()*90)}%`
+            const left2 =`${Math.round(Math.random()*90)}%`
+            const sheep=$(`<img class="sheep" src="./SHEEP.gif" style="top:${top1};left:${left1}">`)
+            $('#game').append(cow).append(wolf).append(sheep)
+            move(cow)
+            move(wolf)
+            move(sheep)
+        }
+        if(countdown<=0){
+            clearInterval(timer)
+            $('#game img').remove()
+            $('#start').attr('disabled',false)
+            Swal.fire({
+                icon:'info',
+                title:'時間到',
+                text:`${score}分`
+            })
+        }
+    }, 1000)
+})
+
+$('#game').on('click','.cow',function(){
+    $(this).attr('src', '')
+    $(this).stop()
+    $(this).css({
+        'user-selsct':'none',
+        '-webkit-user-drag':'none',
+        'pointer-events':'none'
+    })
+    $(this).removeClass('.cow')
+    score++
+    $('#score').text(score)
+})
+
+$('#game').on('click','.sheep',function(){
+    $(this).attr('src', '')
+    $(this).stop()
+    $(this).css({
+        'user-selsct':'none',
+        '-webkit-user-drag':'none',
+        'pointer-events':'none'
+    })
+    $(this).removeClass('.sheep')
+    score++
+    $('#score').text(score)
+})
+$('#game').on('click','.wolf',function(){
+    $(this).attr('src', '')
+    $(this).stop()
+    $(this).css({
+        'user-selsct':'none',
+        '-webkit-user-drag':'none',
+        'pointer-events':'none'
+    })
+    $(this).removeClass('.wolf')
+    score--
+    $('#score').text(score)
+})
+    </script>
+</body>
+</html>
